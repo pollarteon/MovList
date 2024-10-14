@@ -1,13 +1,14 @@
+// File: main.go
 package main
 
 import (
 	"Frontend/API"
+	"Frontend/UI/custominput" // Import the custom input package
 	"fmt"
 	"os"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/bubbles/textinput"
 )
 
 type model struct {
@@ -15,26 +16,20 @@ type model struct {
 	cursor        int              // Cursor to select a movie
 	selected      map[int]struct{} // Which movie is marked as selected
 	needsSearch   bool             // Flag to prompt for a movie search
-	textInput     textinput.Model  // Text input for search term
+	movieInput     custominput.Model // Custom text input for search term
 }
 
 func initialModel() model {
-	ti := textinput.New()
-	ti.Placeholder = "Enter movie title..."
-	ti.Focus() // Start with text input focused
-	ti.CharLimit = 256
-	ti.Width = 30
-
 	return model{
 		SearchResults: []API.Movie{},
 		selected:      make(map[int]struct{}),
 		needsSearch:   true,
-		textInput:     ti,
+		movieInput:     custominput.New("Enter movie title..."), // Use custom text input
 	}
 }
 
 func (m model) Init() tea.Cmd {
-	return textinput.Blink // Start blinking cursor for text input
+	return m.movieInput.Init() // Initialize custom text input with blinking cursor
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -43,12 +38,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "q":
+		case "ctrl+c":
 			return m, tea.Quit
 		case "enter":
 			if m.needsSearch {
 				// Fetch movie data when "enter" is pressed while in search mode
-				movie := strings.TrimSpace(m.textInput.Value())
+				movie := strings.TrimSpace(m.movieInput.Value())
 				if movie == "" {
 					return m, nil // Don't search if input is empty
 				}
@@ -61,15 +56,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				m.SearchResults = response.Search
 				m.needsSearch = false
-				m.textInput.Reset() // Clear text input after search
+				m.movieInput.Reset() // Clear text input after search
 				return m, nil
-			}
-
-			_, ok := m.selected[m.cursor]
-			if ok {
-				delete(m.selected, m.cursor)
-			} else {
-				m.selected[m.cursor] = struct{}{}
 			}
 
 		case "up", "k":
@@ -80,19 +68,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.cursor < len(m.SearchResults)-1 {
 				m.cursor++
 			}
-		case "R","r":
-			if m.needsSearch==false {
+		case "R", "r":
+			if !m.needsSearch {
 				m.needsSearch = true
-				m.cursor = 0;
-				return m,cmd;
+				m.cursor = 0
+				m.SearchResults = nil // Clear search results for reset
+				m.movieInput.Reset()
+				return m, cmd
 			}
 		}
-	
 	}
 
 	// Update textInput when in search mode
 	if m.needsSearch {
-		m.textInput, cmd = m.textInput.Update(msg)
+		m.movieInput, cmd = m.movieInput.Update(msg)
 	}
 
 	return m, cmd
@@ -100,30 +89,29 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	var output string
+	output += "\n"
 	if m.needsSearch {
-		output += "Enter The Name Of the Movie You want to add to the Wish List:\n\n"
-		output += m.textInput.View() + "\n" // Render the text input field
+		output += "Enter the name of the movie you want to add to the Wish List:\n\n"
+		output += m.movieInput.View() + "\n" // Render the custom text input field
 	} else {
-		output+="\n";
 		for i, movie := range m.SearchResults {
 			cursor := " " // Default cursor is empty space
 			if i == m.cursor {
 				cursor = ">>>" // Mark the current cursor position
 			}
 			output += fmt.Sprintf("%s %s (%s)\n", cursor, movie.Title, movie.Year)
-			
 		}
-		output+= "\nPress R to reset Search\n"
+		output += "\nPress R to start a new search.\n"
 	}
-	output+= "\nPress q to Quit the App ... \n"
-	
+	output += "\nPress ctrl+c to quit the app.\n"
+
 	return output
 }
 
 func main() {
 	p := tea.NewProgram(initialModel())
 	if _, err := p.Run(); err != nil {
-		fmt.Println("Error Starting Program:", err)
+		fmt.Println("Error starting program:", err)
 		os.Exit(1)
 	}
 }
