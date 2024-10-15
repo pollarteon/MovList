@@ -39,12 +39,15 @@ func Search(MovieTitle string) (SearchResponse, error) {
 	url := fmt.Sprintf("http://www.omdbapi.com/?apikey=%s&s=%s&type=movie", MOVIE_API_KEY, MovieTitle)
 	req, _ := http.NewRequest("GET", url, nil)
 
-	res, _ := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
+	if err!=nil{
+		return SearchResponse{},err;
+	}
 	defer res.Body.Close()
 
 	body, _ := io.ReadAll(res.Body)
 
-	// Parse JSON into the struct
+	
 	var apiResponse SearchResponse
 	err = json.Unmarshal(body, &apiResponse)
 	if err != nil {

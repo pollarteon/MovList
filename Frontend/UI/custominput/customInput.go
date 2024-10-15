@@ -17,7 +17,6 @@ func New(placeholder string) Model {
 	ti.Focus()
 	ti.CharLimit = 256
 	ti.Width = 30
-
 	return Model{
 		TextInput: ti,
 	}
@@ -39,12 +38,10 @@ func (m Model) View() string {
 	return m.TextInput.View()
 }
 
-// Value returns the current value of the text input.
 func (m Model) Value() string {
 	return m.TextInput.Value()
 }
 
-// Reset clears the text input field.
 func (m *Model) Reset() {
 	m.TextInput.SetValue("")
 }
