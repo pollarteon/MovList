@@ -16,7 +16,7 @@ func New(placeholder string) Model {
 	ti.Placeholder = placeholder
 	ti.Focus()
 	ti.CharLimit = 256
-	ti.Width = 30
+	ti.Width = 50
 	return Model{
 		TextInput: ti,
 	}

@@ -3,8 +3,8 @@ package resultscreen
 import (
 	"Frontend/API"
 	"Frontend/UI/custominput"
+	"Frontend/Screens/allscreens"
 	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -13,16 +13,16 @@ type Model struct{
 	cursor int
 	selected map[int]struct{}
 	movieInput *custominput.Model
-	needsSearch *bool
+	allscreens *allscreens.Model
 }
 
-func InitializeScreen(results []API.Movie,movieInput *custominput.Model,needsSearch *bool) Model{
+func InitializeScreen(results []API.Movie,movieInput *custominput.Model,allscreens *allscreens.Model) Model{
 	return Model{
 		results: results,
 		cursor: 0,
 		selected: make(map[int]struct{}),
 		movieInput: movieInput,
-		needsSearch: needsSearch,
+		allscreens: allscreens,
 	}
 }
 
@@ -48,7 +48,7 @@ func (m Model) Update(msg tea.Msg)(Model,tea.Cmd){
 			return m, tea.Quit
 		case "R","r":
 			m.movieInput.Reset()
-			*m.needsSearch = true
+			m.allscreens.SetScreen(allscreens.Search)
 			return m,cmd
 		}
 	}
@@ -67,7 +67,6 @@ func (m Model)View()string{
 		output+=fmt.Sprintf(" %s %s (%s)\n",cursor,movie.Title,movie.Year)
 	}
 	output+="\n Press R to start a new Movie Search\n"
-	output+="\n Press ctrl+c to quit the App\n\n"
 
 	return output
 }

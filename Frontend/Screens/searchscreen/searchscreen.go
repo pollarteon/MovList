@@ -1,23 +1,26 @@
-
 package searchscreen
 
 import (
+	
 	"Frontend/API"
 	"Frontend/UI/custominput"
-	tea "github.com/charmbracelet/bubbletea"
-	"strings"
 	"fmt"
+	"strings"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
 	MovieInput    custominput.Model
 	SearchResults []API.Movie
+
 }
 
 func InitializeScreen() Model {
 	return Model{
 		MovieInput:    custominput.New("Enter Movie Title ..."),
 		SearchResults: []API.Movie{},
+
 	}
 }
 
@@ -59,12 +62,8 @@ func (m Model) View() string {
  
 Search Screen
 
+ %s 
 
- %s
-
-
- Press ctrl+c to quit the app.
- 
 	`, m.MovieInput.View())
 	return output
 }
