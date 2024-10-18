@@ -1,14 +1,19 @@
 package searchscreen
 
 import (
-	
 	"Frontend/API"
 	"Frontend/UI/custominput"
 	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
+
+var searchInputStyle = lipgloss.NewStyle().
+Border(lipgloss.NormalBorder(),false,false,false,true).
+Padding(1)
+
 
 type Model struct {
 	MovieInput    custominput.Model
@@ -60,10 +65,9 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 func (m Model) View() string {
 	output := fmt.Sprintf(`
  
-Search Screen
 
- %s 
+%s 
 
-	`, m.MovieInput.View())
+`, searchInputStyle.Render(m.MovieInput.View()))
 	return output
 }

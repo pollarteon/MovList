@@ -2,11 +2,26 @@ package resultscreen
 
 import (
 	"Frontend/API"
-	"Frontend/UI/custominput"
 	"Frontend/Screens/allscreens"
+	"Frontend/UI/custominput"
 	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
+
+var cursorStyle = lipgloss.NewStyle().
+Foreground(lipgloss.AdaptiveColor{Light: "#D400FFFF",Dark: "#EA97FFFF"}).
+Bold(true)
+
+var instructionsStyle = lipgloss.NewStyle().
+Align(lipgloss.Center). 
+Bold(true). 
+Foreground(lipgloss.Color("#216EFFFF"))
+
+
+
+
 
 type Model struct{
 	results []API.Movie
@@ -61,12 +76,14 @@ func (m Model)View()string{
 
 	for i,movie:=range m.results{
 		cursor:=""
+		movieTitle:=fmt.Sprintf("%s %s (%s)",cursor,movie.Title,movie.Year)
 		if i==m.cursor{
-			cursor = "> "
+			cursor = ">"
+			movieTitle=cursorStyle.Render(cursor+movieTitle)
 		}
-		output+=fmt.Sprintf(" %s %s (%s)\n",cursor,movie.Title,movie.Year)
+		output+=fmt.Sprintf("[%d] %s\n",i+1,movieTitle)
 	}
-	output+="\n Press R to start a new Movie Search\n"
+	output+=instructionsStyle.Render( "\n Press R to start a new Movie Search\n")
 
 	return output
 }

@@ -109,10 +109,10 @@ func (m model) View() string {
 )
 
 	if m.screens.CurrentScreen == allscreens.Search {
-		output += m.searchScreen.View()+"\n\n"+quitStyle.Render("Press ctrl+c to quit the App .\n")
+		output += m.searchScreen.View()+"\n\n"+quitStyle.Render("Press ctrl+c to quit the App .\n\n")
 		return output
 	} else {
-		output += m.resultScreen.View()+"\n\n"+quitStyle.Render("Press ctrl+c to quit the App .\n")
+		output += m.resultScreen.View()+"\n\n"+quitStyle.Render("Press ctrl+c to quit the App .\n\n")
 		return output
 	}
 }
