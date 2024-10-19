@@ -22,13 +22,14 @@ Padding(0,0,0,0).
 Foreground(lipgloss.AdaptiveColor{Light: "#000000",Dark: "#3CFF00FF"}).
 Align(lipgloss.Center).
 Border(lipgloss.NormalBorder(),true).
-BorderForeground(lipgloss.AdaptiveColor{Light: "#000000",Dark: "#3CFF00FF"})
+BorderForeground(lipgloss.AdaptiveColor{Light: "#000000",Dark: "#3CFF00FF"}). 
+Width(100)
 
 
 var quitStyle = lipgloss.NewStyle(). 
 Bold(true). 
 Foreground(lipgloss.Color("#FF0000FF")).
-Align(lipgloss.Center)
+Align(lipgloss.Left)
 
 
 
@@ -79,7 +80,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if len(m.searchScreen.SearchResults) > 0 {
 				m.results = m.searchScreen.SearchResults
 				m.screens.SetScreen(allscreens.Result) 
-				m.ChangeScreen(m,allscreens.Result)
+				cmd =m.ChangeScreen(m,allscreens.Result)
 			}
 
 		case allscreens.Result:
@@ -87,7 +88,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.resultScreen = newResultScreen
 			cmd = screenCmd 
 			if m.screens.CurrentScreen != allscreens.Result {
-				m.ChangeScreen(m,m.screens.CurrentScreen)
+				cmd =m.ChangeScreen(m,m.screens.CurrentScreen)
 			}
 		case allscreens.Detail:
 			newDetailsScreen,screenCmd := m.detailscreen.Update(msg)
@@ -95,7 +96,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd = screenCmd 
 
 			if m.screens.CurrentScreen != allscreens.Detail{
-				m.ChangeScreen(m,m.screens.CurrentScreen)
+				cmd =m.ChangeScreen(m,m.screens.CurrentScreen)
 			}
 
 	}
@@ -106,9 +107,7 @@ func (m model) View() string {
 	
 	output := fmt.Sprintf(
 `
-
 %s  
-
 `,
 		style.Render(`
 	__  __            _     _     _   
@@ -117,20 +116,19 @@ func (m model) View() string {
  | |  | | (_) \ V /| |___| \__ \ |_ 
  |_|  |_|\___/ \_/ |_____|_|___/\__|
                                     
-
 "Find. Watch. Repeat. Your Ultimate Movie Companion in the Terminal!"
-
  `),
 )
 	var screenStr string
 	switch m.screens.CurrentScreen {
 	case allscreens.Search:
-		screenStr = m.searchScreen.View() + "\n" + quitStyle.Render("Press ctrl+c to quit the App.\n\n")
+		screenStr = m.searchScreen.View()
 	case allscreens.Result:
-		screenStr = m.resultScreen.View() + "\n" + quitStyle.Render("Press ctrl+c to quit the App.\n\n")
+		screenStr = m.resultScreen.View()
 	case allscreens.Detail:
-		screenStr = m.detailscreen.View() + "\n" + quitStyle.Render("Press ctrl+c to quit the App.\n\n")
+		screenStr = m.detailscreen.View()
 	}
+	var quitMsg string = quitStyle.Render("Press ctrl+c to quit the App.\n\n")
 		return lipgloss.Place(
 			m.width,
 			m.height,
@@ -140,6 +138,7 @@ func (m model) View() string {
 				lipgloss.Left,
 				output,
 				screenStr,
+				quitMsg,
 			),
 		)
 }
@@ -164,7 +163,7 @@ func (m *model) ChangeScreen(currm *model, screen allscreens.Screen)tea.Cmd {
 		currm.detailscreen = detailscreen.InitializeScreen(&currm.selectedMovie, &currm.screens)
 	}
 	return func() tea.Msg {
-		return tea.WindowSizeMsg{Width: currm.width+1, Height: currm.height+1}
+		return tea.WindowSizeMsg{Width: currm.width, Height: currm.height}
 	}
 }
 

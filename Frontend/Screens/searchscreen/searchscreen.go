@@ -64,7 +64,7 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return *m, cmd
 }
 
-func (m Model) View() string {
+func (m *Model) View() string {
 	output := fmt.Sprintf(`
  
 

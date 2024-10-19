@@ -3,8 +3,6 @@ package detailscreen
 import (
 	"Frontend/API"
 	"Frontend/Screens/allscreens"
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	
@@ -15,12 +13,19 @@ Align(lipgloss.Left).
 Bold(true). 
 Foreground(lipgloss.Color("#216EFFFF"))
 
+var detailsBoxStyle = lipgloss.NewStyle(). 
+Margin(0,0,2,0). 
+Border(lipgloss.NormalBorder(),true). 
+BorderForeground(lipgloss.AdaptiveColor{Light: "#000000FF",Dark: "#EA97FFFF"}). 
+Width(70)
 
 
 
 type Model struct{
 	MovieSelected *API.SearchByIDResponse
 	allscreens *allscreens.Model
+	width int
+	height int
 }
 
 func InitializeScreen(MovieSelected *API.SearchByIDResponse,allscreens *allscreens.Model)Model{
@@ -37,6 +42,10 @@ func (m *Model) Update(msg tea.Msg)(Model,tea.Cmd){
 	var cmd tea.Cmd
 
 	switch msg:=msg.(type){
+	case tea.WindowSizeMsg:
+		m.height = msg.Height
+		m.width = msg.Width
+		return *m,nil
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "P","p":
@@ -48,18 +57,26 @@ func (m *Model) Update(msg tea.Msg)(Model,tea.Cmd){
 		}
 		
 	}
-
+	cmd = tea.EnterAltScreen
 	return *m,cmd
 }
 
-func (m Model)View()string{
-	
-	output := fmt.Sprintf(`
-
-Title:"%s"
-
-%s
-%s
-`,m.MovieSelected.Title,instructionsStyle.Render("Press P to Go Back"),instructionsStyle.Render("Press R to Reset"))
-	return output
+func (m *Model)View()string{
+	var movieTitle string =detailsBoxStyle.Render("Title : " +m.MovieSelected.Title+" \n")
+	instructions := lipgloss.JoinVertical(
+		lipgloss.Left,
+		instructionsStyle.Render("Press P to Go Back"),
+		instructionsStyle.Render("Press R to Reset Search\n"),
+	)
+	return lipgloss.Place(
+		m.width,
+		m.height,
+		lipgloss.Left,
+		lipgloss.Top,
+		lipgloss.JoinVertical(
+			lipgloss.Left,
+			movieTitle,
+			instructions,
+		),
+	)
 }

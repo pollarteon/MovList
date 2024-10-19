@@ -74,7 +74,7 @@ func (m *Model) Update(msg tea.Msg)(Model,tea.Cmd){
 				fmt.Println(err)
 				return *m, nil
 			}
-			
+			m.results = []API.Movie{}
 			*(m.selectedMovie) = response
 			return *m, cmd
 		case "R","r":
@@ -90,15 +90,16 @@ func (m *Model)View()string{
 	var title string
 	var instructions string
 	title="Search Results Screen"
-
-	for i,movie:=range m.results{
-		cursor:=""
-		movieTitle:=fmt.Sprintf("%s %s (%s)",cursor,movie.Title,movie.Year)
-		if i==m.cursor{
-			cursor = ">"
-			movieTitle=cursorStyle.Render(cursor+movieTitle)
+	if len(m.results)>0{
+		for i,movie:=range m.results{
+			cursor:=""
+			movieTitle:=fmt.Sprintf("%s %s (%s)",cursor,movie.Title,movie.Year)
+			if i==m.cursor{
+				cursor = ">"
+				movieTitle=cursorStyle.Render(cursor+movieTitle)
+			}
+			list+=fmt.Sprintf("[%d] %s\n",i+1,movieTitle)
 		}
-		list+=fmt.Sprintf("[%d] %s\n",i+1,movieTitle)
 	}
 	instructions=instructionsStyle.Render(fmt.Sprintln(`
 	Press S to View Movie Details
