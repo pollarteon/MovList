@@ -2,6 +2,7 @@ package searchscreen
 
 import (
 	"Frontend/API"
+	"Frontend/Screens/allscreens"
 	"Frontend/UI/custominput"
 	"fmt"
 	"strings"
@@ -11,21 +12,21 @@ import (
 )
 
 var searchInputStyle = lipgloss.NewStyle().
-Border(lipgloss.NormalBorder(),false,false,false,true).
-Padding(1)
+Border(lipgloss.NormalBorder(),false,false,true,false).
+Padding(0)
 
 
 type Model struct {
 	MovieInput    custominput.Model
 	SearchResults []API.Movie
-
+	allscreens *allscreens.Model
 }
 
-func InitializeScreen() Model {
+func InitializeScreen(allscreen *allscreens.Model) Model {
 	return Model{
 		MovieInput:    custominput.New("Enter Movie Title ..."),
 		SearchResults: []API.Movie{},
-
+		allscreens: allscreen,
 	}
 }
 
@@ -45,13 +46,14 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				return *m, nil
 			}
 
-			response, err := API.Search(movie)
+			response,err := API.Search(movie);
 			if err != nil {
 				fmt.Println("Error fetching movie titles:", err)
 				return *m, nil
 			}
 
 			m.SearchResults = response.Search
+			m.allscreens.SetScreen(allscreens.Result)
 			m.MovieInput.Reset()
 		case "ctrl+c":
 			return *m,tea.Quit

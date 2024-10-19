@@ -3,9 +3,7 @@ package resultscreen
 import (
 	"Frontend/API"
 	"Frontend/Screens/allscreens"
-	"Frontend/UI/custominput"
 	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -15,7 +13,7 @@ Foreground(lipgloss.AdaptiveColor{Light: "#D400FFFF",Dark: "#EA97FFFF"}).
 Bold(true)
 
 var instructionsStyle = lipgloss.NewStyle().
-Align(lipgloss.Center). 
+Align(lipgloss.Left). 
 Bold(true). 
 Foreground(lipgloss.Color("#216EFFFF"))
 
@@ -27,28 +25,34 @@ type Model struct{
 	results []API.Movie
 	cursor int
 	selected map[int]struct{}
-	movieInput *custominput.Model
 	allscreens *allscreens.Model
+	selectedMovie *API.SearchByIDResponse
+	width int
+	height int
 }
 
-func InitializeScreen(results []API.Movie,movieInput *custominput.Model,allscreens *allscreens.Model) Model{
+func InitializeScreen(results []API.Movie,allscreens *allscreens.Model,selectedMovie *API.SearchByIDResponse) Model{
 	return Model{
 		results: results,
 		cursor: 0,
 		selected: make(map[int]struct{}),
-		movieInput: movieInput,
 		allscreens: allscreens,
+		selectedMovie: selectedMovie,
 	}
 }
 
-func(m Model) Init() tea.Cmd{
+func(m *Model) Init() tea.Cmd{
 	return nil;
 } 
 
-func (m Model) Update(msg tea.Msg)(Model,tea.Cmd){
+func (m *Model) Update(msg tea.Msg)(Model,tea.Cmd){
 	var cmd tea.Cmd
 
 	switch msg:=msg.(type){
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height=msg.Height
+		return *m,nil
 	case tea.KeyMsg:
 		switch msg.String(){
 		case "up", "k":
@@ -60,19 +64,32 @@ func (m Model) Update(msg tea.Msg)(Model,tea.Cmd){
 				m.cursor++
 			}
 		case "ctrl+c":
-			return m, tea.Quit
+			return *m, tea.Quit
+		case "S","s","enter":
+			m.allscreens.SetScreen(allscreens.Detail)
+			selectedMovie := m.results[m.cursor]
+			ImdbId := selectedMovie.IMDbID
+			response, err := API.SearchByID(ImdbId)
+			if err != nil {
+				fmt.Println(err)
+				return *m, nil
+			}
+			
+			*(m.selectedMovie) = response
+			return *m, cmd
 		case "R","r":
-			m.movieInput.Reset()
 			m.allscreens.SetScreen(allscreens.Search)
-			return m,cmd
+			return *m,cmd
 		}
 	}
-	return m,cmd
+	return *m,cmd
 }
 
-func (m Model)View()string{
-	var output string
-	output+="\nSearch Results Screen\n\n"
+func (m *Model)View()string{
+	var list string
+	var title string
+	var instructions string
+	title="Search Results Screen"
 
 	for i,movie:=range m.results{
 		cursor:=""
@@ -81,9 +98,22 @@ func (m Model)View()string{
 			cursor = ">"
 			movieTitle=cursorStyle.Render(cursor+movieTitle)
 		}
-		output+=fmt.Sprintf("[%d] %s\n",i+1,movieTitle)
+		list+=fmt.Sprintf("[%d] %s\n",i+1,movieTitle)
 	}
-	output+=instructionsStyle.Render( "\n Press R to start a new Movie Search\n")
-
-	return output
+	instructions=instructionsStyle.Render(fmt.Sprintln(`
+	Press S to View Movie Details
+	Press R to Reset Search
+	`))
+	return lipgloss.Place(
+		m.width,
+		m.height,
+		lipgloss.Left,
+		lipgloss.Center,
+		lipgloss.JoinVertical(
+			lipgloss.Left,
+			title,
+			list,
+			instructions,
+		),
+	)
 }

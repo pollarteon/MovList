@@ -4,6 +4,7 @@ type Screen int
 const (
 	Search Screen = iota
 	Result
+	Detail
 )
 
 type Model struct {
