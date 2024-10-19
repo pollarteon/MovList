@@ -5,33 +5,69 @@ import (
 	"Frontend/Screens/allscreens"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	
+	"github.com/charmbracelet/lipgloss/tree"
 )
+
+//STYLING
 
 var instructionsStyle = lipgloss.NewStyle().
 Align(lipgloss.Left). 
 Bold(true). 
 Foreground(lipgloss.Color("#216EFFFF"))
 
-var detailsBoxStyle = lipgloss.NewStyle(). 
-Margin(0,0,2,0). 
-Border(lipgloss.NormalBorder(),true). 
-BorderForeground(lipgloss.AdaptiveColor{Light: "#000000FF",Dark: "#EA97FFFF"}). 
-Width(70)
+var fieldStyle = lipgloss.NewStyle(). 
+Padding(0,1). 
+Foreground(lipgloss.AdaptiveColor{Light: "#000000FF",Dark: "#90ADFFFF"}).
+Width(100).
+Bold(true).
+Underline(true)
+
+var valueStyle = lipgloss.NewStyle(). 
+Foreground(lipgloss.AdaptiveColor{Light: "#155800FF",Dark: "#EA97FFFF"}). 
+Bold(true). 
+Width(100)
 
 
+var EnumeratorStyle = lipgloss.NewStyle(). 
+Foreground(lipgloss.Color("#FF7B00FF")). 
+MarginRight(1). 
+Bold(true)
+
+
+//COMPONENT DEFINITION
 
 type Model struct{
 	MovieSelected *API.SearchByIDResponse
 	allscreens *allscreens.Model
+	detailsTree *tree.Tree
 	width int
 	height int
 }
 
 func InitializeScreen(MovieSelected *API.SearchByIDResponse,allscreens *allscreens.Model)Model{
+	t := tree.New().Root(".").
+	Child(
+		fieldStyle.Render("Movie Name"),
+		tree.New().Child(valueStyle.Render(MovieSelected.Title)),
+		fieldStyle.Render("Genre"),
+		tree.New().Child(valueStyle.Render(MovieSelected.Genre)),
+		fieldStyle.Render("Plot"),
+		tree.New().Child(valueStyle.Render(MovieSelected.Plot)),
+		fieldStyle.Render("Actors"),
+		tree.New().Child(valueStyle.Render(MovieSelected.Actors)),
+		fieldStyle.Render("Language"),
+		tree.New().Child(valueStyle.Render(MovieSelected.Language)),
+		fieldStyle.Render("Country"),
+		tree.New().Child(valueStyle.Render(MovieSelected.Country)),
+	). 
+	Enumerator(tree.RoundedEnumerator). 
+	EnumeratorStyle(EnumeratorStyle)
+
+
 	return Model{
 		MovieSelected: MovieSelected,
 		allscreens:allscreens,
+		detailsTree: t,
 	}
 }
 func (m *Model) Init() (tea.Cmd){
@@ -62,7 +98,7 @@ func (m *Model) Update(msg tea.Msg)(Model,tea.Cmd){
 }
 
 func (m *Model)View()string{
-	var movieTitle string =detailsBoxStyle.Render("Title : " +m.MovieSelected.Title+" \n")
+
 	instructions := lipgloss.JoinVertical(
 		lipgloss.Left,
 		instructionsStyle.Render("Press P to Go Back"),
@@ -75,7 +111,7 @@ func (m *Model)View()string{
 		lipgloss.Top,
 		lipgloss.JoinVertical(
 			lipgloss.Left,
-			movieTitle,
+			m.detailsTree.String()+"\n",
 			instructions,
 		),
 	)

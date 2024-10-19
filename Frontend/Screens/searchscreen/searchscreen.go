@@ -11,11 +11,14 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+//STYLING
 var searchInputStyle = lipgloss.NewStyle().
 Border(lipgloss.NormalBorder(),false,false,true,false).
 Padding(0)
 
 
+
+//COMPONENT RENDERING
 type Model struct {
 	MovieInput    custominput.Model
 	SearchResults []API.Movie
@@ -67,7 +70,6 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 func (m *Model) View() string {
 	output := fmt.Sprintf(`
  
-
 %s 
 
 `, searchInputStyle.Render(m.MovieInput.View()))

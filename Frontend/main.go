@@ -132,7 +132,7 @@ func (m model) View() string {
 		return lipgloss.Place(
 			m.width,
 			m.height,
-			lipgloss.Left,
+			lipgloss.Center,
 			lipgloss.Top,
 			lipgloss.JoinVertical(
 				lipgloss.Left,
