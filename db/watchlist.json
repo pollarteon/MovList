@@ -13,7 +13,7 @@
     "imdbID": "tt12434942",
     "Type": "movie",
     "Poster": "https://m.media-amazon.com/images/M/MV5BMjY5YzYzZjYtMjgzZS00NmMyLThlNTgtY2Q4MDRhZmNkYzg5XkEyXkFqcGdeQXVyOTkzNjg4ODQ@._V1_SX300.jpg",
-    "watched": false
+    "watched": true
   },
   {
     "Title": "The Wind Cannot Read",
@@ -38,5 +38,37 @@
     "Type": "movie",
     "Poster": "https://m.media-amazon.com/images/M/MV5BYTQ3NzBlMzYtNDgzOC00MmU3LWI0N2YtZDVmNTVmNTEwYTMyXkEyXkFqcGc@._V1_SX300.jpg",
     "watched": true
+  },
+  {
+    "Title": "Is My Palm Read",
+    "Year": "1933",
+    "imdbID": "tt0024187",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMDMxYjFmZmQtYzY1NS00NjlkLWI5ZjAtODlhYTM0ODZmMjA1XkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "Next Avengers: Heroes of Tomorrow",
+    "Year": "2008",
+    "imdbID": "tt1259998",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMTQ3NjExNjY4N15BMl5BanBnXkFtZTcwNTczODkwNQ@@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Crippled Avengers",
+    "Year": "1978",
+    "imdbID": "tt0077292",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYjU2ODU5NzMtMzQ2NC00MmI5LWI1NjMtNmRmMjMzOTMxNWZhXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Avengers Confidential: Black Widow \u0026 Punisher",
+    "Year": "2014",
+    "imdbID": "tt3482378",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMTU2MDg0Njk4MF5BMl5BanBnXkFtZTgwMTY0OTIyMTE@._V1_SX300.jpg",
+    "watched": false
   }
 ]
