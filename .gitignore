@@ -6,3 +6,7 @@ npm-debug.log*
 .env
 .env.local
 .env.*.local
+
+# Ignore all files in .db/ but keep the folder itself
+.db/*
+!.db/.gitkeep
