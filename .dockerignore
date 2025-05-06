@@ -1,0 +1,29 @@
+# Ignore OS/editor specific files
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore build and binary files
+bin/
+dist/
+*.exe
+*.out
+*.test
+
+# Ignore dependency directories (if using Go modules)
+vendor/
+
+# Ignore local configuration files
+.env
+*.env
+
+# Ignore log files
+*.log
+
+# Ignore Git files
+.git/
+.gitignore
+
+# Ignore unnecessary project files
+*.md
+LICENSE

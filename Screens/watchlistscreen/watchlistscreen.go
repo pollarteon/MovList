@@ -17,30 +17,31 @@ var instructionsStyle = lipgloss.NewStyle().
 	Bold(true).
 	Foreground(lipgloss.Color("#216EFFFF"))
 
-
 var Watchlist []API.Movie
 var idMap = make(map[string]struct{}) // imdbID → present
 const watchlistFile = "./db/watchlist.json"
+const pageSize = 15
 
 type Model struct {
-	watchlist     []API.Movie
-	allscreens    *allscreens.Model
-	selectedMovie *API.SearchByIDResponse
-	cursor        int
-	width         int
-	height        int
+	watchlist      []API.Movie
+	allscreens     *allscreens.Model
+	selectedMovie  *API.SearchByIDResponse
+	cursor         int
+	pagefirstIndex int
+	width          int
+	height         int
 }
 
-func InitializeScreen(allscreen *allscreens.Model,selectedMovie *API.SearchByIDResponse) Model {
-
+func InitializeScreen(allscreen *allscreens.Model, selectedMovie *API.SearchByIDResponse) Model {
 	_ = LoadWatchlistFromFile()
 	return Model{
-		watchlist:     Watchlist,
-		allscreens:    allscreen,
-		selectedMovie: selectedMovie,
-		cursor:        0,
-		width:         0,
-		height:        0,
+		watchlist:      Watchlist,
+		allscreens:     allscreen,
+		selectedMovie:  selectedMovie,
+		pagefirstIndex: 0,
+		cursor:         0,
+		width:          0,
+		height:         0,
 	}
 }
 
@@ -65,35 +66,52 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down", "j":
-			if m.cursor < len(m.watchlist)-1 {
+			pageLastIndex := m.pagefirstIndex + pageSize
+			if pageLastIndex > len(m.watchlist) {
+				pageLastIndex = len(m.watchlist)
+			}
+			if m.cursor < pageLastIndex-m.pagefirstIndex-1 {
 				m.cursor++
 			}
+		case "left", "h":
+			if m.pagefirstIndex-pageSize >= 0 {
+				m.pagefirstIndex -= pageSize
+				m.cursor = 0
+			}
+		case "right", "l":
+			if m.pagefirstIndex+pageSize < len(m.watchlist) {
+				m.pagefirstIndex += pageSize
+				m.cursor = 0
+			}
 		case "enter":
-			toggleWatchedStatus(m.cursor)
-		case "s","S":
+			globalIndex := m.pagefirstIndex + m.cursor
+			toggleWatchedStatus(globalIndex)
+			m.watchlist = Watchlist
+		case "s", "S":
+			globalIndex := m.pagefirstIndex + m.cursor
 			m.allscreens.SetScreen(allscreens.Detail)
-			imdbId := m.watchlist[m.cursor].IMDbID
-			response,err :=API.SearchByID(imdbId)
+			imdbId := m.watchlist[globalIndex].IMDbID
+			response, err := API.SearchByID(imdbId)
 			if err != nil {
 				fmt.Println(err)
 				return *m, nil
 			}
-			*(m.selectedMovie) =response;
-			return *m,cmd;
-		case "d", "D":
-			imdbId := m.watchlist[m.cursor].IMDbID
-			removeFromWatchlist(imdbId)
-			if m.cursor >= len(Watchlist) && m.cursor > 0 {
-				m.cursor-- 
-			}
-			m.watchlist = Watchlist
+			*(m.selectedMovie) = response
 			return *m, cmd
+		case "d", "D":
+			globalIndex := m.pagefirstIndex + m.cursor
+			imdbId := m.watchlist[globalIndex].IMDbID
+			removeFromWatchlist(imdbId)
+			m.watchlist = Watchlist
+			if m.cursor > 0 && m.cursor >= len(m.watchlist)-m.pagefirstIndex {
+				m.cursor--
+			}
 		case "p", "P":
 			m.allscreens.SetScreen(allscreens.Search)
 			return *m, cmd
 		case "r", "R":
 			m.allscreens.SetScreen(allscreens.Result)
-			return *m,cmd
+			return *m, cmd
 		}
 	}
 	return *m, cmd
@@ -104,7 +122,13 @@ func (m *Model) View() string {
 	var watchedSymbol string
 	title := "Watchlist\n\n"
 
-	for i, movie := range m.watchlist {
+	endIndex := m.pagefirstIndex + pageSize
+	if endIndex > len(m.watchlist) {
+		endIndex = len(m.watchlist)
+	}
+	page := m.watchlist[m.pagefirstIndex:endIndex]
+
+	for i, movie := range page {
 		style := lipgloss.NewStyle().Bold(i == m.cursor)
 		if i == m.cursor {
 			style = style.Foreground(lipgloss.AdaptiveColor{Light: "#D400FFFF", Dark: "#EA97FFFF"}).Bold(true)
@@ -116,9 +140,8 @@ func (m *Model) View() string {
 		} else {
 			watchedSymbol = "❌"
 		}
-		list += style.Render(fmt.Sprintf("%s. %s (%s) %s",fmt.Sprintf("%d",i+1), movie.MovieTitle, movie.Year, watchedSymbol)) + "\n"
+		list += style.Render(fmt.Sprintf("%d. %s (%s) %s", m.pagefirstIndex+i+1, movie.MovieTitle, movie.Year, watchedSymbol)) + "\n"
 	}
-
 
 	return lipgloss.Place(m.width, m.height,
 		lipgloss.Center, lipgloss.Center,
@@ -126,20 +149,20 @@ func (m *Model) View() string {
 			lipgloss.Left,
 			title,
 			list,
-			instructionsStyle.Render("[P] - Go Back"),
-			instructionsStyle.Render("[R] - Search Results "),
-			instructionsStyle.Render("[S] - View Movie Details "),
-			instructionsStyle.Render("[D] - Delete Movie "),
+			instructionsStyle.Render("[↑↓] - Navigate  [←→] - Prev/Next Page"),
+			instructionsStyle.Render("[S] - View Movie Details"),
+			instructionsStyle.Render("[D] - Delete Movie"),
+			instructionsStyle.Render("[P] - Go to Search Screen"),
+			instructionsStyle.Render("[R] - Go to Results Screen"),
 		),
 	)
 }
-
 
 func AddToWatchlist(movie API.Movie) {
 	if _, exists := idMap[movie.IMDbID]; !exists {
 		Watchlist = append(Watchlist, movie)
 		idMap[movie.IMDbID] = struct{}{}
-		_ = SaveWatchlistToFile() 
+		_ = SaveWatchlistToFile()
 	}
 }
 
@@ -155,14 +178,13 @@ func removeFromWatchlist(imdbID string) {
 	_ = SaveWatchlistToFile()
 }
 
-
-func toggleWatchedStatus(i int ) {
-	Watchlist[i].Watched = !Watchlist[i].Watched
-	_ = SaveWatchlistToFile()
+func toggleWatchedStatus(i int) {
+	if i >= 0 && i < len(Watchlist) {
+		Watchlist[i].Watched = !Watchlist[i].Watched
+		_ = SaveWatchlistToFile()
+	}
 }
 
-
-// SaveWatchlistToFile writes the Watchlist to a JSON file
 func SaveWatchlistToFile() error {
 	data, err := json.MarshalIndent(Watchlist, "", "  ")
 	if err != nil {
@@ -171,7 +193,6 @@ func SaveWatchlistToFile() error {
 	return os.WriteFile(watchlistFile, data, 0644)
 }
 
-// LoadWatchlistFromFile reads the watchlist from file and initializes global variables
 func LoadWatchlistFromFile() error {
 	path := filepath.Join(".", watchlistFile)
 	data, err := os.ReadFile(path)
@@ -189,6 +210,5 @@ func LoadWatchlistFromFile() error {
 	for _, movie := range Watchlist {
 		idMap[movie.IMDbID] = struct{}{}
 	}
-
 	return nil
 }

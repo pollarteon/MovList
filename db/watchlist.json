@@ -1,34 +1,154 @@
 [
   {
-    "Title": "When You Read This Letter",
+    "Title": "Fear Street: Part One - 1994",
+    "Year": "2021",
+    "imdbID": "tt6566576",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BZWViZDRiMGYtZTlmMS00ZDM2LWIzNWUtYmNjYzBiYjJkNTk3XkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "Fear Street: Part Two - 1978",
+    "Year": "2021",
+    "imdbID": "tt9701940",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BZWUxNGRjZTgtNTYxNC00YTA4LTkwODktOWEwZDMwNzc4NDkzXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "The Wages of Fear",
     "Year": "1953",
-    "imdbID": "tt0045981",
+    "imdbID": "tt0046268",
     "Type": "movie",
-    "Poster": "https://m.media-amazon.com/images/M/MV5BOGRjZmVkODMtNzdkNi00NzczLTk1ODctOTg5MWNmOWM2ZDM5XkEyXkFqcGdeQXVyMTYzNTE3NDA@._V1_SX300.jpg",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMDdhOGMwODQtZGM2MS00NGQxLWEyZDMtOTkzMjFjYjI3ZmM2XkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Fear Street: Part Three - 1666",
+    "Year": "2021",
+    "imdbID": "tt9701942",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYzk2ODhhOTMtOGYzYS00NWU4LThjYjQtNTVhYzVjZmIxMTlkXkEyXkFqcGc@._V1_SX300.jpg",
     "watched": true
   },
   {
-    "Title": "Is My Palm Read",
-    "Year": "1933",
-    "imdbID": "tt0024187",
+    "Title": "Cape Fear",
+    "Year": "1962",
+    "imdbID": "tt0055824",
     "Type": "movie",
-    "Poster": "https://m.media-amazon.com/images/M/MV5BMDMxYjFmZmQtYzY1NS00NjlkLWI5ZjAtODlhYTM0ODZmMjA1XkEyXkFqcGc@._V1_SX300.jpg",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BZTI0ZDQyMjUtMGY1OC00NTFiLThhYjQtOTg0YTM4NTA2NjUzXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Har Kisse Ke Hisse: Kaamyaab",
+    "Year": "2018",
+    "imdbID": "tt7881550",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYmRlZDRhZWMtZmFlMC00ODllLTk2ZDEtZjQ5ZGI3N2E0MmFjXkEyXkFqcGdeQXVyNTQ2OTY5NDM@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Har Har Mahadev",
+    "Year": "2022",
+    "imdbID": "tt22489564",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYWJiMjQyODUtYWZhNy00N2ZhLTgxYzAtNTdlYjc3MjJjN2ZhXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Captain Marvel",
+    "Year": "2019",
+    "imdbID": "tt4154664",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BZDI1NGU2ODAtNzBiNy00MWY5LWIyMGEtZjUxZjUwZmZiNjBlXkEyXkFqcGc@._V1_SX300.jpg",
     "watched": true
   },
   {
-    "Title": "Star Wars: Episode VII - The Force Awakens: The Story Awakens - The Table Read",
+    "Title": "Marvel Studios: Assembling a Universe",
+    "Year": "2014",
+    "imdbID": "tt3591568",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BOWEzNGFjNjYtZGQ4Mi00ODEyLTlkZDYtZjFhMjZjZTdiNWZiXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Adventures of Captain Marvel",
+    "Year": "1941",
+    "imdbID": "tt0033317",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYjBhMzQ5NWUtMDQ3Yi00N2JiLWIxMjQtYmZkMjFhYTQ4MDExXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Petla",
+    "Year": "2020",
+    "imdbID": "tt12841318",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BZjQ4OWY4ZjEtYWE5Yy00OTU0LWJjYTctZGY2OTcyZjdkZjBhXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Lucifer",
+    "Year": "2019",
+    "imdbID": "tt6067752",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BZTc4MzlkYzktNzM2Ny00OGEyLTllMGItZjZlNGEzNWE0YTU3XkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "Memento",
+    "Year": "2000",
+    "imdbID": "tt0209144",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYmQ3MjliNjAtNWFiZS00YWI1LTlmZTktMzBiNDE1NjRhZjU0XkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "A Minecraft Movie",
+    "Year": "2025",
+    "imdbID": "tt3566834",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYzFjMzNjOTktNDBlNy00YWZhLWExYTctZDcxNDA4OWVhOTJjXkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": false
+  },
+  {
+    "Title": "Thudarum",
+    "Year": "2025",
+    "imdbID": "tt31969600",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BNzEwNmMwZjMtOTY0OS00NTBjLTg0MWItYmE2NjM2Y2QzNTk4XkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "Iron Man",
+    "Year": "2008",
+    "imdbID": "tt0371746",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "Iron Man 3",
+    "Year": "2013",
+    "imdbID": "tt1300854",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMjIzMzAzMjQyM15BMl5BanBnXkFtZTcwNzM2NjcyOQ@@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "Iron Man 2",
+    "Year": "2010",
+    "imdbID": "tt1228705",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYWYyOGQzOGYtMGQ1My00ZWYxLTgzZjktZWYzN2IwYjkxYzM0XkEyXkFqcGc@._V1_SX300.jpg",
+    "watched": true
+  },
+  {
+    "Title": "Warcraft",
     "Year": "2016",
-    "imdbID": "tt5613052",
+    "imdbID": "tt0803096",
     "Type": "movie",
-    "Poster": "https://m.media-amazon.com/images/M/MV5BMzk4ZTNjMjUtOGE3OS00Y2FlLWE5NjAtYjZmM2ExMzY2YzVlXkEyXkFqcGdeQXVyNzMxMzYyOTI@._V1_SX300.jpg",
-    "watched": true
-  },
-  {
-    "Title": "We Are Still Here",
-    "Year": "2015",
-    "imdbID": "tt3520418",
-    "Type": "movie",
-    "Poster": "https://m.media-amazon.com/images/M/MV5BMjQwMzgzMjczOV5BMl5BanBnXkFtZTgwNDk2MTUxNTE@._V1_SX300.jpg",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMjIwNTM0Mzc5MV5BMl5BanBnXkFtZTgwMDk5NDU1ODE@._V1_SX300.jpg",
     "watched": true
   }
 ]

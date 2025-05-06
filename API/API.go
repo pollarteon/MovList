@@ -15,7 +15,6 @@ type Movie struct {
     Year   string `json:"Year"`
     IMDbID string `json:"imdbID"`
     Type   string `json:"Type"`
-    Poster string `json:"Poster"`
 	Watched bool `json:"watched"`
 }
 
