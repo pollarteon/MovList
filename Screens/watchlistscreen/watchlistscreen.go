@@ -70,7 +70,7 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 		case "enter":
 			toggleWatchedStatus(m.cursor)
-		case "d","D":
+		case "s","S":
 			m.allscreens.SetScreen(allscreens.Detail)
 			imdbId := m.watchlist[m.cursor].IMDbID
 			response,err :=API.SearchByID(imdbId)
@@ -80,6 +80,14 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 			*(m.selectedMovie) =response;
 			return *m,cmd;
+		case "d", "D":
+			imdbId := m.watchlist[m.cursor].IMDbID
+			removeFromWatchlist(imdbId)
+			if m.cursor >= len(Watchlist) && m.cursor > 0 {
+				m.cursor-- 
+			}
+			m.watchlist = Watchlist
+			return *m, cmd
 		case "p", "P":
 			m.allscreens.SetScreen(allscreens.Search)
 			return *m, cmd
@@ -120,6 +128,8 @@ func (m *Model) View() string {
 			list,
 			instructionsStyle.Render("[P] - Go Back"),
 			instructionsStyle.Render("[R] - Search Results "),
+			instructionsStyle.Render("[S] - View Movie Details "),
+			instructionsStyle.Render("[D] - Delete Movie "),
 		),
 	)
 }
@@ -132,6 +142,19 @@ func AddToWatchlist(movie API.Movie) {
 		_ = SaveWatchlistToFile() 
 	}
 }
+
+func removeFromWatchlist(imdbID string) {
+	newWatchlist := make([]API.Movie, 0, len(Watchlist))
+	for _, movie := range Watchlist {
+		if movie.IMDbID != imdbID {
+			newWatchlist = append(newWatchlist, movie)
+		}
+	}
+	Watchlist = newWatchlist
+	delete(idMap, imdbID)
+	_ = SaveWatchlistToFile()
+}
+
 
 func toggleWatchedStatus(i int ) {
 	Watchlist[i].Watched = !Watchlist[i].Watched
