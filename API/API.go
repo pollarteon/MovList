@@ -61,14 +61,20 @@ type Ratings struct {
 func Search(MovieTitle string) (SearchResponse, error) {
 
 	// Load API Key
-	err := godotenv.Load()
+	err := godotenv.Load() // Try to load .env file
 	if err != nil {
-		fmt.Println("Error loading .env file") 
-		fmt.Println(err)
-		return SearchResponse{}, err
+		// Only warn if the error is specifically about missing file
+		if !os.IsNotExist(err) {
+			fmt.Println("Warning loading .env file:", err) 
+			// Continue execution - don't return error
+		}
 	}
 
-	MOVIE_API_KEY :=os.Getenv("MOVIE_API_KEY");
+	MOVIE_API_KEY := os.Getenv("MOVIE_API_KEY")
+	if MOVIE_API_KEY == "" {
+		return SearchResponse{}, fmt.Errorf("MOVIE_API_KEY not found in environment variables")
+	}
+
 	url := fmt.Sprintf("http://www.omdbapi.com/?apikey=%s&s=%s&type=movie", MOVIE_API_KEY, MovieTitle)
 	req, _ := http.NewRequest("GET", url, nil)
 

@@ -1,7 +1,6 @@
 # Stage 1: Build stage
 FROM golang:1.21-alpine AS builder
 
-# Install necessary utilities for terminal color support
 RUN apk update && apk add --no-cache bash coreutils ncurses git
 
 WORKDIR /app
