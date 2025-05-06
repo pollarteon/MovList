@@ -15,6 +15,10 @@ import (
 var searchInputStyle = lipgloss.NewStyle().
 Border(lipgloss.NormalBorder(),false,false,true,false).
 Padding(0)
+var instructionsStyle = lipgloss.NewStyle().
+	Align(lipgloss.Left).
+	Bold(true).
+	Foreground(lipgloss.Color("#216EFFFF"))
 
 
 
@@ -58,6 +62,11 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.SearchResults = response.Search
 			m.allscreens.SetScreen(allscreens.Result)
 			m.MovieInput.Reset()
+		case "ctrl+w":
+			
+			m.allscreens.SetScreen(allscreens.Watchlist)
+			m.MovieInput.Reset()
+			return *m, cmd
 		case "ctrl+c":
 			return *m,tea.Quit
 		}
@@ -69,9 +78,9 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m *Model) View() string {
 	output := fmt.Sprintf(`
- 
+%s 
 %s 
 
-`, searchInputStyle.Render(m.MovieInput.View()))
+`, searchInputStyle.Render(m.MovieInput.View()),instructionsStyle.Render("\n\nPress ctrl+w to go to watchlist."))
 	return output
 }

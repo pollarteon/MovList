@@ -5,6 +5,7 @@ const (
 	Search Screen = iota
 	Result
 	Detail
+	Watchlist
 )
 
 type Model struct {

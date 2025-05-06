@@ -11,11 +11,12 @@ import (
 
 // Define structs to match the JSON response
 type Movie struct {
-    Title  string `json:"Title"`
+    MovieTitle  string `json:"Title"`
     Year   string `json:"Year"`
     IMDbID string `json:"imdbID"`
     Type   string `json:"Type"`
     Poster string `json:"Poster"`
+	Watched bool `json:"watched"`
 }
 
 type SearchResponse struct {
@@ -63,7 +64,7 @@ func Search(MovieTitle string) (SearchResponse, error) {
 	// Load API Key
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		fmt.Println("Error loading .env file") 
 		fmt.Println(err)
 		return SearchResponse{}, err
 	}

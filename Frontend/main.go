@@ -6,9 +6,9 @@ import (
 	"Frontend/Screens/detailscreen"
 	"Frontend/Screens/resultscreen"
 	"Frontend/Screens/searchscreen"
+	"Frontend/Screens/watchlistscreen"
 	"fmt"
 	"os"
-
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -31,6 +31,11 @@ Bold(true).
 Foreground(lipgloss.Color("#FF0000FF")).
 Align(lipgloss.Left)
 
+var instructionsStyle = lipgloss.NewStyle().
+	Align(lipgloss.Left).
+	Bold(true).
+	Foreground(lipgloss.Color("#216EFFFF"))
+
 
 
 
@@ -39,6 +44,7 @@ type model struct {
 	searchScreen  searchscreen.Model
 	resultScreen  resultscreen.Model
 	detailscreen detailscreen.Model
+	watchlistscreen watchlistscreen.Model
 	results       []API.Movie
 	selectedMovie API.SearchByIDResponse
 	width int
@@ -46,16 +52,22 @@ type model struct {
 }
 
 func initialModel() *model {
-	screens:=allscreens.InitializeScreen()
+	screens := allscreens.InitializeScreen()
+
 	return &model{
-		screens:      screens,
-		searchScreen: searchscreen.InitializeScreen(&screens),
+		screens:         screens,
+		searchScreen:    searchscreen.InitializeScreen(&screens),
+		resultScreen:    resultscreen.InitializeScreen([]API.Movie{}, &screens, &API.SearchByIDResponse{}),
+		detailscreen:    detailscreen.InitializeScreen(&API.SearchByIDResponse{}, &screens),
+		watchlistscreen: watchlistscreen.InitializeScreen(&screens, &API.SearchByIDResponse{}), 
 	}
 }
+
 
 func (m *model) Init() tea.Cmd {
 	return tea.Batch(
 		m.searchScreen.Init(),
+		m.ChangeScreen(m, m.screens.CurrentScreen), 
 	)
 }
 
@@ -71,16 +83,21 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch m.screens.CurrentScreen{
 
+		
 		case allscreens.Search:
-			
 			newSearchScreen, screenCmd := m.searchScreen.Update(msg)
 			m.searchScreen = newSearchScreen
-			cmd = screenCmd 
-
+			cmd = screenCmd
+		
+			
 			if len(m.searchScreen.SearchResults) > 0 {
 				m.results = m.searchScreen.SearchResults
-				m.screens.SetScreen(allscreens.Result) 
-				cmd =m.ChangeScreen(m,allscreens.Result)
+				m.screens.SetScreen(allscreens.Result)
+			}
+		
+			
+			if m.screens.CurrentScreen != allscreens.Search {
+				cmd = m.ChangeScreen(m, m.screens.CurrentScreen)
 			}
 
 		case allscreens.Result:
@@ -98,7 +115,13 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.screens.CurrentScreen != allscreens.Detail{
 				cmd =m.ChangeScreen(m,m.screens.CurrentScreen)
 			}
-
+		case allscreens.Watchlist:
+			newWatchlistScreen, screenCmd := m.watchlistscreen.Update(msg)
+			m.watchlistscreen = newWatchlistScreen
+			cmd = screenCmd
+			if m.screens.CurrentScreen != allscreens.Watchlist {
+				cmd = m.ChangeScreen(m, m.screens.CurrentScreen)
+			}
 	}
 	return m, cmd
 }
@@ -127,8 +150,11 @@ func (m model) View() string {
 		screenStr = m.resultScreen.View()
 	case allscreens.Detail:
 		screenStr = m.detailscreen.View()
+	case allscreens.Watchlist:
+		screenStr = m.watchlistscreen.View()
 	}
 	var quitMsg string = quitStyle.Render("Press ctrl+c to quit the App.\n\n")
+	// var instructions string = instructionsStyle.Render("Press ctrl+w to go to watchlist.\n\n")
 		return lipgloss.Place(
 			m.width,
 			m.height,
@@ -138,6 +164,7 @@ func (m model) View() string {
 				lipgloss.Left,
 				output,
 				screenStr,
+				// instructions,
 				quitMsg,
 			),
 		)
@@ -161,6 +188,8 @@ func (m *model) ChangeScreen(currm *model, screen allscreens.Screen)tea.Cmd {
 		currm.resultScreen = resultscreen.InitializeScreen(currm.results, &currm.screens, &currm.selectedMovie)
 	case allscreens.Detail:
 		currm.detailscreen = detailscreen.InitializeScreen(&currm.selectedMovie, &currm.screens)
+	case allscreens.Watchlist:
+		currm.watchlistscreen = watchlistscreen.InitializeScreen(&currm.screens,&currm.selectedMovie)
 	}
 	return func() tea.Msg {
 		return tea.WindowSizeMsg{Width: currm.width, Height: currm.height}
