@@ -41,7 +41,6 @@ func InitializeScreen(results []API.Movie, allscreens *allscreens.Model, selecte
 func (m *Model) Init() tea.Cmd {
 	return nil
 }
-
 func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 
@@ -63,12 +62,19 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "ctrl+c":
 			return *m, tea.Quit
 		case "S", "s", "enter":
+			if len(m.results) == 0 {
+				return *m, nil
+			}
 			m.allscreens.SetScreen(allscreens.Detail)
 			selectedMovie := m.results[m.cursor]
 			ImdbId := selectedMovie.IMDbID
 			response, err := API.SearchByID(ImdbId)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("Error calling API:", err)
+				return *m, nil
+			}
+			if response.Title == "" {
+				fmt.Println("Invalid response received:", response)
 				return *m, nil
 			}
 			m.results = []API.Movie{}
@@ -77,16 +83,19 @@ func (m *Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "R", "r":
 			m.allscreens.SetScreen(allscreens.Search)
 			return *m, cmd
-		case "W","w":
+		case "W", "w":
 			m.allscreens.SetScreen(allscreens.Watchlist)
-			return *m,cmd
+			return *m, cmd
 		case "A", "a":
-			watchlistscreen.AddToWatchlist(m.results[m.cursor])
+			if len(m.results) > 0 {
+				watchlistscreen.AddToWatchlist(m.results[m.cursor])
+			}
 			return *m, cmd
 		}
 	}
 	return *m, cmd
 }
+
 
 func (m *Model) View() string {
 	var list string

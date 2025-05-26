@@ -99,11 +99,13 @@ func Search(MovieTitle string) (SearchResponse, error) {
 
 func SearchByID(imdbId string)(SearchByIDResponse,error){
 	//loading Movie API KEY
-	err := godotenv.Load()
+	err := godotenv.Load() // Try to load .env file
 	if err != nil {
-		fmt.Println("Error loading .env file")
-		fmt.Println(err)
-		return SearchByIDResponse{}, err
+		// Only warn if the error is specifically about missing file
+		if !os.IsNotExist(err) {
+			fmt.Println("Warning loading .env file:", err) 
+			// Continue execution - don't return error
+		}
 	}
 
 	MOVIE_API_KEY :=os.Getenv("MOVIE_API_KEY");
